@@ -15,11 +15,14 @@ func HandleTcpConnection(conn *net.TCPConn) {
 	if conn == nil {
 		return
 	}
-
+	defer func () {
+		fmt.Printf("%s closed.\n",conn.RemoteAddr().String())
+		_ = conn.Close()
+	}()
 	for { //循环读取数据并发送
 		bytes, err := tcpReceiver.GetBytes()
 		if err != nil {
-			fmt.Println("xxx")
+			fmt.Printf("connection %s: status: %v .\n", conn.RemoteAddr().String(), err)
 			break
 		}
 		if bytes == nil {
@@ -40,7 +43,7 @@ func HandleTcpConnection(conn *net.TCPConn) {
 		}
 
 	}
-	_ = conn.Close()
+
 }
 func main() {
 	fmt.Println("tcp server start.")
